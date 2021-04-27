@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
 exports.signup = (req, res, next) => {
-    console.log('route signup')             // passe pas !!!!!
+    
     bcrypt.hash(req.body.password, 10)
         .then(hash => {
             const user = new User({
@@ -19,7 +19,7 @@ exports.signup = (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
-    console.log('route login')                      // passe pas !!!!!
+    User.findOne({ email: req.body.email })
         .then(user => {
             if (!user) {
                 return res.status(401).json({ error: 'Utilisateur non trouvé'});

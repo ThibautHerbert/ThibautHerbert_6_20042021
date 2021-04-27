@@ -3,12 +3,13 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
 
+require('dotenv').config()
+
 const sauceRoutes = require('./routes/sauce');
 const userRoutes = require('./routes/user');
 
-
 const app = express();
-mongoose.connect('identifiantetmotdepassecaché',
+mongoose.connect(process.env.DB_CONN_STRING,
   { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
@@ -26,9 +27,9 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json());
 
-//app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use('/api/sauces', sauceRoutes);
-app.use('api/auth', userRoutes);
+app.use('/api/auth', userRoutes);
 
 module.exports = app;

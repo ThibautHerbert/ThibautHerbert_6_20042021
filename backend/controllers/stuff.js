@@ -3,6 +3,7 @@ const fs = require('fs');
 
 exports.createSauce = (req, res, next) => {
     const sauceObject = JSON.parse(req.body.sauce);
+    console.log(sauceObject);
     delete sauceObject._id;
     const sauce = new Sauce({
         ...sauceObject, //copie les champs du corps de la requête
@@ -13,8 +14,9 @@ exports.createSauce = (req, res, next) => {
         .catch(error => res.status(400).json({ error }));
 };
 /*
-exports.like = (req, res, next) => {
-    const sauceObject = JSON.parse(req.body.sauce);
+ //test 1 
+exports.likeSauce = (req, res, next) => {
+    const sauceObject = JSON.parse(req.body.sauce.like);
     delete sauceObject._id;
     const sauce = new Sauce({
         ...sauceObject, //copie les champs du corps de la requête
@@ -23,8 +25,26 @@ exports.like = (req, res, next) => {
     sauce.save()
         .then(() => res.status(201).json({ message : "J'aime enregistré"}))
         .catch(error => res.status(400).json({ error }));
+ //test 2       
+exports.like = (req, res, next) => {
+    const sauceObject = req.file ?
+    { 
+        ...JSON.parse(req.body.sauce.like),
+    } : { ...req.body };
+    Sauce.updateOne({ _id: req.params.id}, { ...sauceObject, _id: req.params.id })
+        .then(() => res.status(200).json({ message: "J'aime supprimée"}))
+        .catch(error => res.status(400).json({ error }));
+};
+//test 3  
+exports.like = (req, res, next) => {
+    Sauce.likes
+    Sauce.dislikes.updateOne({ _id: req.params.id}, { ...sauceObject, _id: req.params.id })
+        .then(() => res.status(200).json({ message: "Sauce modifiée"}))
+        .catch(error => res.status(400).json({ error }));
 };
 */
+// test 4
+
 exports.modifySauce = (req, res, next) => {
     const sauceObject = req.file ?
     { 
