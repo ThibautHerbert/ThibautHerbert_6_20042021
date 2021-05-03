@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
+//paquets de sécurité :
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const mongoSanitize = require('express-mongo-sanitize');
@@ -20,8 +21,6 @@ const limiter = rateLimit({ // spécifie le nombre maximums de requêtes
   message: 'Vous avez réalisé trop de requêtes depuis votre adresse IP, merci de réessayer plus tard',
 })
 app.use('/api', limiter);
-//
-
 // sécurité HTTP Headers
 app.use(helmet());
 
@@ -31,18 +30,16 @@ mongoose.connect(process.env.DB_CONN_STRING,
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
 
+// empêche les erreurs CORS
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-    /*if (req.method === 'OPTIONS') {
-      res.status(200);
-    }*/
     next();
  });
 
  // BodyParser lit la donnée du body depuis req.body
-app.use(bodyParser.json()); // remplacer bodyParser par express. ? et aussi rajouter dans les paramètres du json ({ limit: '10kb' }) rend le body obligatoirement plus petit que 10 kb
+app.use(bodyParser.json());
 // data sanitization 
   // contre les injections noSQL :
 app.use(mongoSanitize()); // enlève les $ et les . des request.body query.string ou request.Params

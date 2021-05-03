@@ -12,5 +12,5 @@ router.put('/:id', auth, multer, sauceCtrl.modifySauce);
 router.delete('/:id', auth, sauceCtrl.deleteSauce);
 router.get('/:id', auth, sauceCtrl.getOneSauce);
 router.get('/', auth, sauceCtrl.getAllSauce);
-// mettre multer après la requête authentification sinon un fichier avec requête non authentifiée serait sauvegardé
+
 module.exports = router;

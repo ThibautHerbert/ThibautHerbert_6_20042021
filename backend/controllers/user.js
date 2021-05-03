@@ -1,4 +1,3 @@
-
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -32,7 +31,7 @@ exports.login = (req, res, next) => {
                     res.status(200).json({
                         userId: user._id,
                         token: jwt.sign(
-                            { userId: user._id }, // données que l'on veut encoder payload
+                            { userId: user._id }, // données que l'on veut encoder le payload
                             'RANDOM_TOKEN_SECRET', // clé secrête pour l'encodage
                             { expiresIn: '24h' } // argument de configuration durée limitée
                         )

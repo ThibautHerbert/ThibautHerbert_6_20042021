@@ -16,48 +16,30 @@ exports.createSauce = (req, res, next) => {
 exports.likeSauce = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id }) // on récupère par l'id de la sauce
         .then(sauce => {
-            console.log("combien de j'aime au départ ? " + sauce.like)
             switch(req.body.like) {             // switch évalue l'expression fournie : like 
-                case 1: // utilisateur aime la sauce
-                    console.log("Le " + sauce.name + " j'aime");
-                    // identifiant de l'utilisateur doit être ajouté au tableau approprié  :
+                case 1: // utilisateur aime la sauce   
                     if (! sauce.usersLiked.includes(req.body.userId)) { //si utilisateur n'a pas déjà aimé la sauce alors 
-                        //sauce.like ++;
-                        //sauce.usersLiked.push(userId);
-                        console.log("combien de j'aime ? " + sauce.likes)
-                        console.log(sauce.usersLiked)
-
                         Sauce.updateOne({ _id: req.params.id}, {$push: {usersLiked: req.body.userId}, $inc: {likes: 1}})
                             .then(() => res.status(201).json({ message: "j'aime : ajouté à la sauce"}))
-                            .catch(error => res.status(400).json({ error }));       
-                    }
-                    // en gardant une trace de ses préférences et en l'empêchant d'aimer la même sauce plusieurs fois
-                    // mettre à jour nbr total de j'aime
+                            .catch(error => res.status(400).json({ error }));      
+                    }       // met à jour nbr total de j'aime
                     break; 
                     // break permet de s'assurer que seules les instructions associées à ce cas seront exécutées
-                    // si break n'est pas utilisée le programme continuera son exécution
-                    /// break empêche donc la répétition d'aimer la même sauce plusieurs fois en plus du if ??
                 case 0: // utilisateur annule ce qu'il aime ou n'aime pas
-                    console.log("Le " + sauce.name + " 0 j'aime, 0 j'aime pas");
-                    // identifiant de l'utilisateur doit être supprimé du tableau approprié 
-                    // en gardant une trace de ses préférences et en l'empêchant de ne pas aimer ou d'aimer la même sauce plusieurs fois
-                    // mettre à jour nbr total de j'aime
-                    
-                    if (sauce.usersLiked.includes(req.body.userId)) { // doit retirer 1 aux j'aime et enlever l'id du array
+                    // 1er cas : met à jour nbr total de j'aime et supprime l'id de l'utilisateur au tableau approprié
+                    if (sauce.usersLiked.includes(req.body.userId)) {
                         Sauce.updateOne({ _id: req.params.id}, {$pull: {usersLiked: req.body.userId}, $inc: {likes: -1}})
                             .then(() => res.status(201).json({ message: "j'aime : retiré de la sauce"}))
                             .catch(error => res.status(400).json({ error }));
-                    } else if (sauce.usersDisliked.includes(req.body.userId)) { // doit retirer 1 aux je n'aime pas et enlever l'id du array
+                    // 2ème cas : met à jour nbr total de je n'aime pas et supprime l'id de l'utilisateur au tableau approprié
+                    } else if (sauce.usersDisliked.includes(req.body.userId)) {
                         Sauce.updateOne({ _id: req.params.id}, {$pull: {usersDisliked: req.body.userId}, $inc: {dislikes: -1}})
                             .then(() => res.status(201).json({ message: "je n'aime pas : retiré de la sauce"}))
                             .catch(error => res.status(400).json({ error }));
                     }
                     break;
-                case -1: // utilisateur n'aime la sauce
-                    console.log("Le " + sauce.name + " je n'aime pas");
-                    // identifiant de l'utilisateur doit être ajouté du tableau approprié
-                    // en gardant une trace de ses préférences et en l'empêchant de ne pas aimer la même sauce plusieurs fois
-                    // mettre à jour nbr total de je n'aime pas
+                case -1: // utilisateur n'aime pas la sauce
+                    // met à jour nbr total de je n'aime pas et ajoute l'id de l'utilisateur au tableau approprié
                     if (! sauce.usersDisliked.includes(req.body.userId)) { // doit ajouter 1 aux dislikes et ajouter un id à l'array
                         Sauce.updateOne({ _id: req.params.id}, {$push: {usersDisliked: req.body.userId}, $inc: {dislikes: 1}})
                             .then(() => res.status(201).json({ message: "je n'aime pas : ajouté à la sauce"}))
