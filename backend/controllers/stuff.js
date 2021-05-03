@@ -13,47 +13,13 @@ exports.createSauce = (req, res, next) => {
         .then(() => res.status(201).json({ message : 'Sauce enregistrée'}))
         .catch(error => res.status(400).json({ error }));
 };
-/*
- //test 1 
-exports.likeSauce = (req, res, next) => {
-    const sauceObject = JSON.parse(req.body.sauce.like);
-    delete sauceObject._id;
-    const sauce = new Sauce({
-        ...sauceObject, //copie les champs du corps de la requête
-        
-    });
-    sauce.save()
-        .then(() => res.status(201).json({ message : "J'aime enregistré"}))
-        .catch(error => res.status(400).json({ error }));
- //test 2       
-exports.like = (req, res, next) => {
-    const sauceObject = req.file ?
-    { 
-        ...JSON.parse(req.body.sauce.like),
-    } : { ...req.body };
-    Sauce.updateOne({ _id: req.params.id}, { ...sauceObject, _id: req.params.id })
-        .then(() => res.status(200).json({ message: "J'aime supprimée"}))
-        .catch(error => res.status(400).json({ error }));
-};
-//test 3  
-exports.like = (req, res, next) => {
-    Sauce.likes
-    Sauce.dislikes.updateOne({ _id: req.params.id}, { ...sauceObject, _id: req.params.id })
-        .then(() => res.status(200).json({ message: "Sauce modifiée"}))
-        .catch(error => res.status(400).json({ error }));
-};
-*/
-// test 4
 exports.likeSauce = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id }) // on récupère par l'id de la sauce
         .then(sauce => {
-            //sauce.likes = 0
             console.log("combien de j'aime au départ ? " + sauce.like)
             switch(req.body.like) {             // switch évalue l'expression fournie : like 
                 case 1: // utilisateur aime la sauce
                     console.log("Le " + sauce.name + " j'aime");
-                    
-                    
                     // identifiant de l'utilisateur doit être ajouté au tableau approprié  :
                     if (! sauce.usersLiked.includes(req.body.userId)) { //si utilisateur n'a pas déjà aimé la sauce alors 
                         //sauce.like ++;
@@ -63,8 +29,7 @@ exports.likeSauce = (req, res, next) => {
 
                         Sauce.updateOne({ _id: req.params.id}, {$push: {usersLiked: req.body.userId}, $inc: {likes: 1}})
                             .then(() => res.status(201).json({ message: "j'aime : ajouté à la sauce"}))
-                            .catch(error => res.status(400).json({ error }));
-                            
+                            .catch(error => res.status(400).json({ error }));       
                     }
                     // en gardant une trace de ses préférences et en l'empêchant d'aimer la même sauce plusieurs fois
                     // mettre à jour nbr total de j'aime
@@ -87,7 +52,6 @@ exports.likeSauce = (req, res, next) => {
                             .then(() => res.status(201).json({ message: "je n'aime pas : retiré de la sauce"}))
                             .catch(error => res.status(400).json({ error }));
                     }
-                    
                     break;
                 case -1: // utilisateur n'aime la sauce
                     console.log("Le " + sauce.name + " je n'aime pas");
