@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-//const Sauce = require('../models/stuff');
-const sauceCtrl = require('../controllers/stuff'); // chemin local
+const sauceCtrl = require('../controllers/sauce'); // chemin local
 const auth = require('../middleware/auth');
 const multer = require('../middleware/multer-config');
 
